@@ -1,0 +1,82 @@
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] IncrementalCompile -----------[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncrementalCompile.incrementalCompile[0m
+[0m[[0m[0mdebug[0m] [0m[0mprevious = Stamps for: 29 products, 4 sources, 4 libraries[0m
+[0m[[0m[0mdebug[0m] [0m[0mcurrent source = Set(${BASE}/src/main/scala/Main copy.scala, ${BASE}/src/main/scala/Main.scala, ${BASE}/src/main/scala/homework/hunters/io/Swag.scala, ${BASE}/src/main/scala/homework/hunters/io/operator/Operator.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0m> initialChanges = InitialChanges(Changes(added = Set(), removed = Set(), changed = Set(${BASE}/src/main/scala/homework/hunters/io/operator/Operator.scala, ${BASE}/src/main/scala/Main.scala), unmodified = ...),Set(),Set(),API Changes: Set())[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial source changes:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	removed: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0m	added: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0m	modified: Set(${BASE}/src/main/scala/homework/hunters/io/operator/Operator.scala, ${BASE}/src/main/scala/Main.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated products: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mExternal API changes: API Changes: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mModified binary dependencies: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial directly invalidated classes: Set(test, homework.hunters.io.operator.Operator, homework.hunters.io.operator.StdOutSinkOperator, mtest, homework.hunters.io.operator.WordEvent, homework.hunters.io.operator.WindowByKeyOperator, homework.hunters.io.operator.MapOperator, homework.hunters.io.operator.StdoutSourceOperator, Main, homework.hunters.io.operator.StreamItem, homework.hunters.io.operator.KeyByOperator)[0m
+[0m[[0m[0mdebug[0m] [0m[0mSources indirectly invalidated by:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	product: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0m	binary dep: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0m	external source: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated classes: Set(test, homework.hunters.io.operator.Operator, homework.hunters.io.operator.StdOutSinkOperator, mtest, homework.hunters.io.operator.WordEvent, homework.hunters.io.operator.WindowByKeyOperator, homework.hunters.io.operator.MapOperator, homework.hunters.io.operator.StdoutSourceOperator, Main, homework.hunters.io.operator.StreamItem, homework.hunters.io.operator.KeyByOperator)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated sources:Set(${BASE}/src/main/scala/homework/hunters/io/operator/Operator.scala, ${BASE}/src/main/scala/Main.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: test, homework.hunters.io.operator.Operator, homework.hunters.io.operator.StdOutSinkOperator, mtest, homework.hunters.io.operator.WordEvent, homework.hunters.io.operator.WindowByKeyOperator, homework.hunters.io.operator.MapOperator, homework.hunters.io.operator.StdoutSourceOperator, Main, homework.hunters.io.operator.StreamItem, homework.hunters.io.operator.KeyByOperator[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding homework.hunters.io.operator.StdOutSinkOperator by homework.hunters.io.operator.Operator[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding homework.hunters.io.operator.WindowByKeyOperator by homework.hunters.io.operator.Operator[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding homework.hunters.io.operator.MapOperator by homework.hunters.io.operator.Operator[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding homework.hunters.io.operator.StdoutSourceOperator by homework.hunters.io.operator.Operator[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncluding homework.hunters.io.operator.KeyByOperator by homework.hunters.io.operator.Operator[0m
+[0m[[0m[0mdebug[0m] [0m[0mcompilation cycle 1[0m
+[0m[[0m[0minfo[0m] [0m[0mcompiling 2 Scala sources to /Users/yftach.shenbaum/scala-playground/hello-world/target/scala-2.13/classes ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mGetting org.scala-sbt:compiler-bridge_2.13:1.6.0:compile for Scala 2.13.8[0m
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] Running cached compiler 140f9715 for Scala compiler version 2.13.8[0m
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] The Scala compiler is invoked with:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	-bootclasspath[0m
+[0m[[0m[0mdebug[0m] [0m[0m	/Users/yftach.shenbaum/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.8/scala-library-2.13.8.jar[0m
+[0m[[0m[0mdebug[0m] [0m[0m	-classpath[0m
+[0m[[0m[0mdebug[0m] [0m[0m	/Users/yftach.shenbaum/scala-playground/hello-world/target/scala-2.13/classes:/Users/yftach.shenbaum/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.13/2.1.1/scala-parser-combinators_2.13-2.1.1.jar:/Users/yftach.shenbaum/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/json4s/json4s-native_2.13/4.0.5/json4s-native_2.13-4.0.5.jar:/Users/yftach.shenbaum/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/json4s/json4s-core_2.13/4.0.5/json4s-core_2.13-4.0.5.jar:/Users/yftach.shenbaum/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/json4s/json4s-native-core_2.13/4.0.5/json4s-native-core_2.13-4.0.5.jar:/Users/yftach.shenbaum/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/json4s/json4s-ast_2.13/4.0.5/json4s-ast_2.13-4.0.5.jar:/Users/yftach.shenbaum/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/json4s/json4s-scalap_2.13/4.0.5/json4s-scalap_2.13-4.0.5.jar:/Users/yftach.shenbaum/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/thoughtworks/paranamer/paranamer/2.8/paranamer-2.8.jar[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from homework.hunters.io.operator.WindowByKeyOperator...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: homework.hunters.io.operator.WindowByKeyOperator[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(homework.hunters.io.operator.WindowByKeyOperator)[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of Main: [UsedName(apply,[Default])][0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(homework.hunters.io.operator.WindowByKeyOperator,ModifiedNames(changes = UsedName(copy,[Default]), UsedName(apply,[Default]), UsedName(unapply,[Default]), UsedName(copy$default$1,[Default]), UsedName(homework;hunters;io;operator;WindowByKeyOperator;init;,[Default]), UsedName(keyStreams,[Default]))) invalidates 2 classes due to The homework.hunters.io.operator.WindowByKeyOperator has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(copy,[Default]), UsedName(apply,[Default]), UsedName(unapply,[Default]), UsedName(copy$default$1,[Default]), UsedName(homework;hunters;io;operator;WindowByKeyOperator;init;,[Default]), UsedName(keyStreams,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by transitive inheritance: Set(homework.hunters.io.operator.WindowByKeyOperator)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > [0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by member reference: Set(Main)[0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from homework.hunters.io.operator.KeyByOperator...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: homework.hunters.io.operator.KeyByOperator[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(homework.hunters.io.operator.KeyByOperator)[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of Main: [UsedName(streams,[Default])][0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(homework.hunters.io.operator.KeyByOperator,ModifiedNames(changes = UsedName(streams,[Default]))) invalidates 2 classes due to The homework.hunters.io.operator.KeyByOperator has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(streams,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by transitive inheritance: Set(homework.hunters.io.operator.KeyByOperator)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > [0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by member reference: Set(Main)[0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from test...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: test[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(test)[0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(test,ModifiedNames(changes = UsedName(getClass,[Default]), UsedName(copy,[Default]), UsedName(productElementNames,[Default]), UsedName(hashCode,[Default]), UsedName(clone,[Default]), UsedName(!=,[Default]), UsedName(apply,[Default]), UsedName(andThen,[Default]), UsedName(canEqual,[Default]), UsedName(test;init;,[Default]), UsedName(unapply,[Default]), UsedName(productIterator,[Default]), UsedName(name,[Default]), UsedName(productPrefix,[Default]), UsedName(asInstanceOf,[Default]), UsedName(finalize,[Default]), UsedName(ne,[Default]), UsedName($init$,[Default]), UsedName(notifyAll,[Default]), UsedName(test,[Default]), UsedName(equals,[Default]), UsedName(copy$default$1,[Default]), UsedName(print,[Default]), UsedName(notify,[Default]), UsedName(wait,[Default]), UsedName(##,[Default]), UsedName(synchronized,[Default]), UsedName(==,[Default]), UsedName(toString,[Default]), UsedName(productArity,[Default]), UsedName(eq,[Default]), UsedName(productElementName,[Default]), UsedName(compose,[Default]), UsedName(productElement,[Default]), UsedName(isInstanceOf,[Default]))) invalidates 1 classes due to The test has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(getClass,[Default]), UsedName(copy,[Default]), UsedName(productElementNames,[Default]), UsedName(hashCode,[Default]), UsedName(clone,[Default]), UsedName(!=,[Default]), UsedName(apply,[Default]), UsedName(andThen,[Default]), UsedName(canEqual,[Default]), UsedName(test;init;,[Default]), UsedName(unapply,[Default]), UsedName(productIterator,[Default]), UsedName(name,[Default]), UsedName(productPrefix,[Default]), UsedName(asInstanceOf,[Default]), UsedName(finalize,[Default]), UsedName(ne,[Default]), UsedName($init$,[Default]), UsedName(notifyAll,[Default]), UsedName(test,[Default]), UsedName(equals,[Default]), UsedName(copy$default$1,[Default]), UsedName(print,[Default]), UsedName(notify,[Default]), UsedName(wait,[Default]), UsedName(##,[Default]), UsedName(synchronized,[Default]), UsedName(==,[Default]), UsedName(toString,[Default]), UsedName(productArity,[Default]), UsedName(eq,[Default]), UsedName(productElementName,[Default]), UsedName(compose,[Default]), UsedName(productElement,[Default]), UsedName(isInstanceOf,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by transitive inheritance: Set(test)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > [0m
+[0m[[0m[0mdebug[0m] [0m[0m  > [0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from mtest...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: mtest[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(mtest)[0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(mtest,ModifiedNames(changes = UsedName(getClass,[Default]), UsedName(hashCode,[Default]), UsedName(clone,[Default]), UsedName(!=,[Default]), UsedName(asInstanceOf,[Default]), UsedName(finalize,[Default]), UsedName(ne,[Default]), UsedName($init$,[Default]), UsedName(mtest,[Default]), UsedName(notifyAll,[Default]), UsedName(equals,[Default]), UsedName(print,[Default]), UsedName(notify,[Default]), UsedName(wait,[Default]), UsedName(##,[Default]), UsedName(synchronized,[Default]), UsedName(==,[Default]), UsedName(toString,[Default]), UsedName(eq,[Default]), UsedName(isInstanceOf,[Default]))) invalidates 1 classes due to The mtest has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(getClass,[Default]), UsedName(hashCode,[Default]), UsedName(clone,[Default]), UsedName(!=,[Default]), UsedName(asInstanceOf,[Default]), UsedName(finalize,[Default]), UsedName(ne,[Default]), UsedName($init$,[Default]), UsedName(mtest,[Default]), UsedName(notifyAll,[Default]), UsedName(equals,[Default]), UsedName(print,[Default]), UsedName(notify,[Default]), UsedName(wait,[Default]), UsedName(##,[Default]), UsedName(synchronized,[Default]), UsedName(==,[Default]), UsedName(toString,[Default]), UsedName(eq,[Default]), UsedName(isInstanceOf,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > by transitive inheritance: Set(mtest)[0m
+[0m[[0m[0mdebug[0m] [0m[0m  > [0m
+[0m[[0m[0mdebug[0m] [0m[0m  > [0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
+[0m[[0m[0mdebug[0m] [0m[0mNew invalidations:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	Main[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Main[0m
+[0m[[0m[0mdebug[0m] [0m[0mPreviously invalidated, but (transitively) depend on new invalidations:[0m
+[0m[[0m[0mdebug[0m] [0m[0mFinal step, transitive dependencies:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	Set(Main)[0m
+[0m[[0m[0mdebug[0m] [0m[0mNo classes were invalidated.[0m
+[0m[[0m[0mdebug[0m] [0m[0mScala compilation took 3.878496905 s[0m
+[0m[[0m[0mdebug[0m] [0m[0mdone compiling[0m
