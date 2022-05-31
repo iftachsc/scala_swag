@@ -7,7 +7,7 @@ import scala.language.postfixOps
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import scala.collection.concurrent.{Map => ConcurrentMap,TrieMap}
-import scala.collection.mutable.Map
+import scala.collection.immutable.{Map => ImmutableMap}
 import scala.concurrent.{Await}
 import scala.util.{Success,Failure}
 import scala.concurrent.duration._
@@ -131,7 +131,7 @@ case class MapOperator[A<:StreamItem,B](source: ConcurrentLinkedQueue[A], map: A
 
 case class WindowByKeyOperator[A<:StreamItem,B](keyStreams : Seq[ConcurrentLinkedQueue[A]],/*aggr: (A,A) => B,*/ windowSize: Duration, slide: Duration) extends Operator {
     implicit val ec = ExecutionContext.global
-    var state: ConcurrentMap[String, ConcurrentMap[String,Int]] = new TrieMap[String, ConcurrentMap[String,Int]] //e.g. baz -> (ipum,4)
+    var state: ConcurrentMap[(String,String),Int] = new TrieMap[(String,String),Int] //e.g. baz -> (ipum,4)
     
     //assuming here key is string always
     //var state: Map[String,B] = new TrieMap()
@@ -147,33 +147,32 @@ case class WindowByKeyOperator[A<:StreamItem,B](keyStreams : Seq[ConcurrentLinke
     //     else
     //         b + (a.data -> (b.get(a.data).get + 1))
     // }
+    def queryState(key: (String,String)): Int = {
 
-    def combine(a: Map[String,Int], b: Map[String,Int]): Map[String,Int] = {
-      a ++ b.map{ case (k,v) => k -> (v + a.getOrElse(k,0)) }
     }
 
-    def combine(a: WordEvent, b: Map[String,Int]): Map[String,Int] = {  
-        
-        if(b.get(a.data).isEmpty)  //use case match
-            b + (a.data -> 1)
-        else
-            b + (a.data -> (b.get(a.data).get + 1))
+    def combineSlices(a: Map[(String,String),Int], b: Map[(String,String),Int]): Map[(String,String),Int] = {  
+        a ++ b.map{ case (k,v) => k -> (v + a.getOrElse(k,0)) }
+    }
+
+    def aggregateSlice(buffer: Seq[A]) = {
+        buffer.groupBy(a => (a.key,a.data)).map(kv => (kv._1,kv._2.size))
     }
     
     def stream = {
         val sink: ConcurrentLinkedQueue[String] = new ConcurrentLinkedQueue[String]
-        println("asd")
-        
+        println("in WindowByKeyOperator")
         
             Future {
                 val queue = keyStreams(0)
                 //println("WindowByKey Thread !!!")
                 val sliceSize = if (windowSize.toMillis % slide.toMillis == 0) slide else Duration(windowSize.toMillis % slide.toMillis, MILLISECONDS)
-
-                var partials = Queue[Map[String,Int]]().empty
-                var sliceAggr = Map[String,Int]().empty
+                var buffer = Queue[A]().empty
+                
+                var partials = Queue[ImmutableMap[(String,String),Int]]().empty
+                var sliceAggr = Map[String,Map[String,Int]]().empty
                 val firstEventTS = queue.peek().timestampMillis
-                val arrayPartials = Seq[Int]()
+
                 var msgs = 0
                 //println(firstEventTS - globalStartTS)
 
@@ -190,8 +189,9 @@ case class WindowByKeyOperator[A<:StreamItem,B](keyStreams : Seq[ConcurrentLinke
                     }
                     //assuming here monotonically increasing TS and event-time rather than processing time
                     while(event.timestampMillis < sliceStart + slide.toMillis && !gracePeriodFinished) {
-                        sliceAggr = combine(event.asInstanceOf[WordEvent], sliceAggr);
-
+                        //sliceAggr = combine(event.asInstanceOf[WordEvent], sliceAggr);
+                        //sliceAggr ++ event.key.get -> combine(event.asInstanceOf[WordEvent], sliceAggr.get(event.key.get).get)
+                        buffer.addOne(event)
                         event = queue.poll()
                         while(Option(event).isEmpty) {
                             Thread.sleep(100) //wiating for messages
@@ -205,7 +205,11 @@ case class WindowByKeyOperator[A<:StreamItem,B](keyStreams : Seq[ConcurrentLinke
                     
                     msgs = 0;
                     sliceStart += sliceSize.toMillis
-                    partials.addOne(sliceAggr)
+                    
+                    partials.addOne(aggregateSlice(buffer.toSeq))
+                    buffer.clear
+                    
+                    
                     //println(partials)
                     //trigger window
                     var before = null.asInstanceOf[Long]
@@ -214,14 +218,15 @@ case class WindowByKeyOperator[A<:StreamItem,B](keyStreams : Seq[ConcurrentLinke
                         
                         //println("window: "+ (partials.take((windowSize / slide).intValue).reduce((l,r) => combine(l,r))))
                         //println(key+ "  @@@@")
-                        sink.add("window: "+ (partials.take((windowSize / slide).intValue).reduce((l,r) => combine(l,r))) 
-                                           + " [final aggr took:" + (System.currentTimeMillis() - before ) + " millies, latency: "
-                                           + Duration(System.currentTimeMillis - event.timestampMillis, MILLISECONDS)
-                                           + "]")
+                        val windowAggr = partials.take((windowSize / slide).intValue).reduce((l,r) => combineSlices(l,r))
+                        sink.add("window: " + windowAggr
+                                            + " [final aggr took:" + (System.currentTimeMillis() - before ) + " millies, latency: "
+                                            + Duration(System.currentTimeMillis - event.timestampMillis, MILLISECONDS)
+                                            + "]")
                         
                         partials.dequeue() //removing oldest slice after window is triggered
                     }
-                    sliceAggr = Map[String,Int]().empty
+                    sliceAggr = Map[String,Map[String,Int]]().empty
                 }
             } andThen {
                 case Success(v) =>
@@ -238,7 +243,10 @@ case class WindowByKeyOperator[A<:StreamItem,B](keyStreams : Seq[ConcurrentLinke
 }
 
 sealed trait StreamItem {
-    def key: Option[String]
+    //assuming key always exists in a StreamItem
+    def key: String
+
+    def data: String
 
     def timestamp: Long
 
@@ -248,11 +256,8 @@ sealed trait StreamItem {
 case class WordEvent(timestamp: Long, event_type: String, data: String) extends StreamItem {
   implicit val formats = DefaultFormats
 
-  def key: Option[String] = {
-    if(event_type != null) 
-      Some(event_type)
-    else
-      None
+  def key: String = {
+    event_type
   }
 
   def timestampMillis: Long = {

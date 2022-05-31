@@ -10,8 +10,7 @@ object Main extends App {
 
   val sourceOperator      = StdoutSourceOperator[WordEvent](fac = data => WordEvent(data), command, parallelism = 2)
   //val mapOperator         = MapOperator[WordEvent,(Long, String, Int)](sourceOperator.stream, x => (x.timestamp, x.event_type + "-" + x.data,1))
-  //val keyByOperator       = KeyByOperator[(Long, String, Int)](x => x._2, mapOperator.stream, parallelism = 1)
-  val keyByOperator       = KeyByOperator[WordEvent](x => x.key.get, sourceOperator.stream, parallelism = 1)
+  val keyByOperator       = KeyByOperator[WordEvent](x => x.key, sourceOperator.stream, parallelism = 1)
 
   val windowByKeyOperator = WindowByKeyOperator(keyByOperator.streams, windowSize = Duration("20 seconds"), slide = Duration("5 seconds"))
   val sink                = StdOutSinkOperator(windowByKeyOperator.stream, block = true)   
