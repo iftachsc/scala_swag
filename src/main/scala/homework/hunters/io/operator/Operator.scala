@@ -14,6 +14,8 @@ import scala.concurrent.duration._
 import util.control.Breaks._
 import scala.collection.mutable.Queue
 import scala.collection.immutable.Seq
+import zio.json._
+
 
 trait Operator {
     // def map[A,B](mapFunction: A => B) : MapOperator[A,B] = {
@@ -273,17 +275,20 @@ case class WordEvent(timestamp: Long, event_type: String, data: String) extends 
 }
 
 object WordEvent{
-  def apply(s: String) : WordEvent = {
-    implicit val formats = DefaultFormats
+  
+  implicit val decoder: JsonDecoder[WordEvent] = DeriveJsonDecoder.gen[WordEvent]
 
-    try {
-        parse(s).extract[WordEvent];
-      }
-      catch  {
-          case _: ParserUtil.ParseException => null.asInstanceOf[WordEvent];
-          case _: MappingException => null.asInstanceOf[WordEvent];
-          case t: Throwable => println("Got some: " +t.getClass());throw t;
-      } 
-    }
+//   def apply(json: String) : WordEvent = {
+//     implicit val formats = DefaultFormats
+
+//     try {
+//         parse(json).extract[WordEvent];
+//       }
+//       catch  {
+//           case _: ParserUtil.ParseException => null.asInstanceOf[WordEvent];
+//           case _: MappingException => null.asInstanceOf[WordEvent];
+//           case t: Throwable => println("Got some: " +t.getClass());throw t;
+//       } 
+//     }
 }
 
