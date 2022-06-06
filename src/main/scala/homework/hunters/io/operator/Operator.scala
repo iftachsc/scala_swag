@@ -131,7 +131,7 @@ case class MapOperator[A<:StreamItem,B](source: ConcurrentLinkedQueue[A], map: A
 
 case class WindowByKeyOperator[A<:StreamItem,B](keyStreams : Seq[ConcurrentLinkedQueue[A]],/*aggr: (A,A) => B,*/ windowSize: Duration, slide: Duration) extends Operator {
     implicit val ec = ExecutionContext.global
-    var state: ConcurrentMap[(String,String),Int] = new TrieMap[(String,String),Int] //e.g. baz -> (ipum,4)
+    val state: ConcurrentMap[(String,String),Int] = new TrieMap[(String,String),Int] //e.g. baz -> (ipum,4)
     
     //assuming here key is string always
     //var state: Map[String,B] = new TrieMap()
@@ -147,10 +147,15 @@ case class WindowByKeyOperator[A<:StreamItem,B](keyStreams : Seq[ConcurrentLinke
     //     else
     //         b + (a.data -> (b.get(a.data).get + 1))
     // }
-    def queryState(key: (String,String)): Int = {
-
+    
+    def queryState(key: (String,String)): Option[Int] = {
+        state.get(key)
     }
 
+    def updateState(latestWindowAggr: Map[(String,String),Int]): Unit = {
+        //latestWindowAggr.keySet.foreach(key => state ++ key -> )
+        state ++ latestWindowAggr 
+    }
     def combineSlices(a: Map[(String,String),Int], b: Map[(String,String),Int]): Map[(String,String),Int] = {  
         a ++ b.map{ case (k,v) => k -> (v + a.getOrElse(k,0)) }
     }
@@ -219,6 +224,9 @@ case class WindowByKeyOperator[A<:StreamItem,B](keyStreams : Seq[ConcurrentLinke
                         //println("window: "+ (partials.take((windowSize / slide).intValue).reduce((l,r) => combine(l,r))))
                         //println(key+ "  @@@@")
                         val windowAggr = partials.take((windowSize / slide).intValue).reduce((l,r) => combineSlices(l,r))
+                        updateState(windowAggr)
+                        println("asdasdass")
+                        println(state)
                         sink.add("window: " + windowAggr
                                             + " [final aggr took:" + (System.currentTimeMillis() - before ) + " millies, latency: "
                                             + Duration(System.currentTimeMillis - event.timestampMillis, MILLISECONDS)

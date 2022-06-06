@@ -13,8 +13,14 @@ object Main extends App {
   val keyByOperator       = KeyByOperator[WordEvent](x => x.key, sourceOperator.stream, parallelism = 1)
 
   val windowByKeyOperator = WindowByKeyOperator(keyByOperator.streams, windowSize = Duration("20 seconds"), slide = Duration("5 seconds"))
-  val sink                = StdOutSinkOperator(windowByKeyOperator.stream, block = true)   
+  windowByKeyOperator.stream
+  //val sink                = StdOutSinkOperator(windowByKeyOperator.stream, block = false)   
 
+  while(true){
+    Thread.sleep(10000)
+    println(windowByKeyOperator.queryState(("baz","amet")))
+    Thread.sleep(5000)
+  }
   println("Reached the end of the program")
 
   
