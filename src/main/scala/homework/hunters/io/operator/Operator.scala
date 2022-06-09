@@ -14,7 +14,6 @@ import scala.concurrent.duration._
 import util.control.Breaks._
 import scala.collection.mutable.Queue
 import scala.collection.immutable.Seq
-import zio.json._
 
 
 trait Operator {
@@ -262,33 +261,4 @@ sealed trait StreamItem {
     def timestampMillis: Long
 }
   
-case class WordEvent(timestamp: Long, event_type: String, data: String) extends StreamItem {
-  implicit val formats = DefaultFormats
-
-  def key: String = {
-    event_type
-  }
-
-  def timestampMillis: Long = {
-      timestamp * 1000
-  }
-}
-
-object WordEvent{
-  
-  implicit val decoder: JsonDecoder[WordEvent] = DeriveJsonDecoder.gen[WordEvent]
-
-//   def apply(json: String) : WordEvent = {
-//     implicit val formats = DefaultFormats
-
-//     try {
-//         parse(json).extract[WordEvent];
-//       }
-//       catch  {
-//           case _: ParserUtil.ParseException => null.asInstanceOf[WordEvent];
-//           case _: MappingException => null.asInstanceOf[WordEvent];
-//           case t: Throwable => println("Got some: " +t.getClass());throw t;
-//       } 
-//     }
-}
 

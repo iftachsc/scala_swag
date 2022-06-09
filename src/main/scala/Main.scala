@@ -11,7 +11,10 @@ import java.util.concurrent.TimeUnit
 import zio.json._
 import zio.stream.ZStream.TerminationStrategy
 import zio.clock._
-import java.sql.Time
+import zio.duration._
+import zio.random._
+import java.io.IOException
+
 
 object ZioMain extends zio.App {
   //assumptions:
@@ -30,23 +33,43 @@ object ZioMain extends zio.App {
   //     _       <- process.kill
   //   } yield ()
 
-  val paralelism = 1
-  val command = Command("/Users/yftach.shenbaum/Downloads/blackbox")
+  
+
+  
+  
+  
+  
   val source = for {
-                now <- currentTime(TimeUnit.MILLISECONDS)
-                fiber <- command.linesStream.merge(command.linesStream,TerminationStrategy.Both).merge(command.linesStream,TerminationStrategy.Both).merge(command.linesStream,TerminationStrategy.Both).merge(command.linesStream,TerminationStrategy.Both).merge(command.linesStream,TerminationStrategy.Both)
-                        .map(x => x.fromJson[WordEvent]).collectRight
-                            .takeWhile(_.timestamp < now + 3000)
-                              .aggregateAsync(ZTransducer.foldLeft(0)((count,_) => count + 1))
-                              .take(2)
-                                .aggregateAsync(ZTransducer.foldLeft(0)((count,_) => count + 1))
-                                .tap(x => 
-                                  putStrLn(s"Element $x"))
-                                  .runCollect.fork
-                            
-                _ <- putStrLn("its running!")
-                _ <- fiber.join
-              } yield ()
+     now <- currentTime(TimeUnit.MILLISECONDS)
+     _ <- putStrLn(now.toString)
+     //_ <- SimpleSwag partialAggregationsByEventTime(DataGen.blackbox.map(x => x.fromJson[WordEvent]).collectRight,4.seconds,now.millis, 1.second)
+     _ <- SimpleSwag.partialAggregationsByEventTime(DataGen.blackbox.map(x => x.fromJson[WordEvent]).collectRight, _.timestamp ,4.seconds, 1.second)
+  } yield ()
+
+  
+  // val source = for {
+  //               grace <- ZIO.succeed(2.seconds)
+  //               slide <- ZIO.succeed(6.seconds)
+  //               now <- currentTime(TimeUnit.SECONDS).tap(x => putStrLn(x.toString))
+  //               //fiber <- (1 to volumeScale).foldLeft(command.linesStream)((x,_) => x.merge(command.linesStream,TerminationStrategy.Both))
+  //               fiber     <- blackbox
+  //                             .tap(x => putStrLn(s"Count $x"))
+  //                             .map(x => x.fromJson[WordEvent]).collectRight
+  //                             .runCollect
+
+  //               _ <- partialAggregationsByEventTime(fiber, 3.seconds, now.seconds)
+  //                               // .takeWhile(_.timestamp <= now + slide.getSeconds)
+  //                               // .aggregateAsyncWithin(ZTransducer.foldLeft(0)((x,_) => x + 1)
+  //                               //   ,Schedule.fixed(slide + grace))//limitting grace time for late arrivals
+                                
+  //                             //.take(2)
+  //                              // .aggregateAsync(ZTransducer.foldLeft(0)(_ + 1))
+  //                               // .tap(x => 
+  //                               //   putStrLn(s"Count $x"))
+  //                                 //.runHead
+  //               _ <- putStrLn("its running!")
+  //               // _ <- fiber.join
+  //             } yield ()
     
   
   
