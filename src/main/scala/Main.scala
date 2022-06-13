@@ -11,7 +11,7 @@ import zio.clock._
 import zio.duration._
 import zio.random._
 import java.io.IOException
-
+import zio.console._
 
 object ZioMain extends zio.App {
   //assumptions:
@@ -24,13 +24,11 @@ object ZioMain extends zio.App {
     source.exitCode
   
   val source = {
-
     val windowSize = 10.seconds
-    val slide = 2.seconds
+    val slide      = 2.seconds
 
     for {
       now  <- currentTime(TimeUnit.MILLISECONDS)
-      //_ <- Http4sServer.server
       state <- SimpleSwag.partialAggregationsByEventTime(
                   DataGen.blackbox.map(_.fromJson[WordEvent]).collectRight, 
                   _.timestamp,
