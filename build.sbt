@@ -4,8 +4,8 @@ name := "hello-world"
 organization := "ch.epfl.scala"
 version := "1.0"
 
-val zioVersion = "1.0.12"
-val htt4sVersion = "0.21.22"
+val zioVersion = "1.0.15"
+val htt4sVersion = "0.23.12"
 val circeVersion = "0.14.2"
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "2.1.1"
@@ -19,7 +19,6 @@ libraryDependencies ++= Seq(
 
 
 libraryDependencies += "dev.zio" %% "zio-json" % "0.1.4"
-libraryDependencies += "dev.zio" %% "zio-json-interop-http4s" % "0.1.5"
 
 libraryDependencies ++= Seq(
     "org.http4s" %% "http4s-blaze-server",
@@ -37,9 +36,6 @@ libraryDependencies ++= Seq(
 ).map(_ % circeVersion)
 
 libraryDependencies += "dev.zio" %% "zio-interop-cats" % "3.2.9.1"
-
-//libraryDependencies += "dev.zio" %% "zio-process" % "0.6.1"
-
 
 
 

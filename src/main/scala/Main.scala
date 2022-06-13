@@ -37,6 +37,7 @@ object ZioMain extends zio.App {
                   windowSize,
                   slide,
                   1.second)
+      _ <- Http4sServer.server(state)
       
                 //).catchAll(_ => IO.fail("Something went wrong computing sliding window"))
     } yield ()
