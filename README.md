@@ -22,9 +22,9 @@ inside i use SWAG so know it refers to it.
 window
 
 * **for example:**<br>
-      > window of 18.seconds, slide 3.seconds the slice size will be 3.second<br>
-      > window of 18.seconds, slide 4.seconds the slice size will be 2.second<br>
-      > window of 20.seconds, slide 3.seconds the slice size will be 1.second<br>
+      > window of 18.seconds, slide 3.seconds the slice size will be 3.second
+      > window of 18.seconds, slide 4.seconds the slice size will be 2.second
+      > window of 20.seconds, slide 3.seconds the slice size will be 1.second
 
 
 * the hight the GCD(window,slice) the least number of slices in a slide/window thus the faster a window will be aggregated.
