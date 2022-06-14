@@ -5,9 +5,6 @@ inside i use SWAG so know it refers to it.
 
 * inside you can define both the window size and the slide - both in ZIO.Duration
 
-
-
-
 * the blackbox data generator is implemented inside with a ZStream.repeat
 
 * this drill was implemented using ZIO 1.15 to be able to first expirience how ZIO was before all improvment of ZIO 2.0
@@ -18,9 +15,9 @@ inside i use SWAG so know it refers to it.
   at the begining we first get the GCP of the window and slide sizes to understand how many slices we will have both in a slide and in a 
 window
 
-** for example for window of 18.seconds, slide 3.seconds the slice size will be 3.second
-** for example for window of 18.seconds, slide 4.seconds the slice size will be 2.second
-** for example for window of 20.seconds, slide 3.seconds the slice size will be 1.second
+* for example for window of 18.seconds, slide 3.seconds the slice size will be 3.second
+                  window of 18.seconds, slide 4.seconds the slice size will be 2.second
+                  window of 20.seconds, slide 3.seconds the slice size will be 1.second
 
 * the hight the GCD(window,slice) the least number of slices in a slide/window thus the faster a window will be aggregated.
 * so for example for large windows e.g. hours windows can be computed very fast if we have few slices in a slide.
