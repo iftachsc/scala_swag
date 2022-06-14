@@ -15,17 +15,17 @@ import zio.console._
 
 object ZioMain extends zio.App {
   //assumptions:
-  //1. data is always a single word
   //2. not handling grace periods for now (i.e. wait for current window size data even if it reached its end
-  //3. we handles late arrivals with grace period measured in milliseconds
   
 
   def run(args: List[String]) =
     source.exitCode
   
   val source = {
-    val windowSize = 10.seconds
-    val slide      = 2.seconds
+    //not handling invalid values for windowSize and slide e.g. 0.
+    //when windowSize == slide windows degenerate to Thumbling
+    val windowSize = 25.seconds
+    val slide      = 5.seconds
 
     for {
       now  <- currentTime(TimeUnit.MILLISECONDS)
@@ -36,8 +36,7 @@ object ZioMain extends zio.App {
                   slide,
                   1.second)
       _ <- Http4sServer.server(state)
-      
-                //).catchAll(_ => IO.fail("Something went wrong computing sliding window"))
+      //).catchAll(_ => IO.fail("Something went wrong computing sliding window"))
     } yield ()
   }
 }

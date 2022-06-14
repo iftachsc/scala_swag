@@ -35,19 +35,8 @@ object DataGen {
   }
 }
 
-
-
-case class WordEvent(timestamp: Long, event_type: String, data: String) {
-  def key: String = {
-    event_type
-  }
-
-  def timestampMillis: Long = {
-      timestamp * 1000
-  }
-}
+case class WordEvent(timestamp: Long, event_type: String, data: String)
 
 object WordEvent{
   implicit val decoder: JsonDecoder[WordEvent] = DeriveJsonDecoder.gen
-
 }
