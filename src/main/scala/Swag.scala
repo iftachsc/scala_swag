@@ -1,3 +1,5 @@
+package ai.hunters.homework.iftach.zio.challange
+
 import zio.stream.ZStream._
 import zio.stream.ZStream
 import zio.clock._

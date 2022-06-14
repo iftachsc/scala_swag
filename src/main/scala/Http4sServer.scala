@@ -1,3 +1,5 @@
+package ai.hunters.homework.iftach.zio.challange
+
 import zio._
 import zio.console._
 import zio.interop.catz._
