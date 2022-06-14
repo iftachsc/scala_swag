@@ -3,6 +3,11 @@
 In this drill i implemtented Sliding Window Aggregations (SWAG)
 inside i use SWAG so know it refers to it.
 
+
+* the current dictionary is: event_types = ["baz", "dolor", "bar"], event_data = ["ipum", "amet", "shuki"]
+
+* when running, to get the frequence of words by type issue a GET req to localhost:8080/type/[type] e.g. localhost:8080/type/bar
+
 * inside you can define both the window size and the slide - both in ZIO.Duration
 
 * the blackbox data generator is implemented inside with a ZStream.repeat
