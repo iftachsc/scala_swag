@@ -63,13 +63,12 @@ object SimpleSwag extends Swag {
         def computeSliceAndUpdateState(sliceEnd: Duration, slicesAggrState: Ref[Queue[Slice]]) = 
             //this pulls messages for the next slice and compute it. then adds it to the slices state. additionaly 
             for {
-                sliceAggr <- computeNextSlice(sliceEnd).tap(x => putStrLn("Handled slice: "+ x.toString))
+                sliceAggr <- computeNextSlice(sliceEnd).tap(slice => putStrLn(s"Handled slice: ${slice}"))
                             //when we filled the window with slices and need to start remove the oldest one on each insertion
-                state <- slicesAggrState.updateAndGet(_.appended(sliceAggr) match {
+                _         <- slicesAggrState.updateAndGet(_.appended(sliceAggr) match {
                                 case q if(q.length > numSlicesInWindow) => q.dequeue._2
                                 case q => q
                              })
-                _     <- putStrLn(s" num slices in state: ${state.length}")
             } yield ()
         
         def computeSlideAndUpdateState(slideStart: Duration, slicesAggrState: Ref[Queue[Slice]], 
@@ -83,15 +82,16 @@ object SimpleSwag extends Swag {
                             if (queue.length == numSlicesInWindow)
                                 queue.iterator.fold(emptyStateMap)(combineSlices(_,_))
                             else
-                                emptyStateMap).timed.flatMap({
-                                    case (time, effect) => 
-                                        putStrLn(s"Window: ${effect} [compute time: ${time.toMillis} millis]").as(effect)
+                                emptyStateMap
+                            ).timed.flatMap({
+                                    case (_, window) if(window.isEmpty) => ZIO.succeed(window)  //when the first window is still not available                                     
+                                    case (time, window) => putStrLn(s"Window: ${window} [compute time: ${time.toMillis} millis]").as(window)
                                 })
                 _  <- recentWindowState.set(window)
             } yield ()
 
         for {
-            _                 <- putStrLn(s"Slice Size: ${sliceSize.toSeconds} second/s").zip(putStrLn(s"numSlicesInWindow: ${numSlicesInWindow}"))
+            _                 <- putStrLn(s"Slice Size: ${sliceSize.toSeconds} second/s").zipPar(putStrLn(s"#Slices in window: ${numSlicesInWindow}"))
             slicesAggrState   <- Ref.make(Queue[Slice]().empty)
             recentWindowState <- Ref.make(emptyStateMap)
             start             <- currentTime(TimeUnit.MILLISECONDS)

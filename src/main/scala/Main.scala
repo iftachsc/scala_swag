@@ -25,8 +25,8 @@ object ZioMain extends zio.App {
   val source = {
     //not handling invalid values for windowSize and slide e.g. 0.
     //when windowSize == slide windows degenerate to Thumbling
-    val windowSize = 25.seconds
-    val slide      = 5.seconds
+    val windowSize = 30.seconds
+    val slide      = 3.seconds
 
     for {
       now  <- currentTime(TimeUnit.MILLISECONDS)
