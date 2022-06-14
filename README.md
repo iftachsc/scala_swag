@@ -6,7 +6,8 @@ inside i use SWAG so know it refers to it.
 
 * the current dictionary is: event_types = ["baz", "dolor", "bar"], event_data = ["ipum", "amet", "shuki"]
 
-* when running, to get the frequency of word event by type in the recent window issue a GET req to localhost:8080/type/[type] e.g. localhost:8080/type/bar
+* when running, to get the frequency of word event by type in the recent window issue a GET req to localhost:8080/type/[type]<br>
+     > localhost:8080/type/bar
 
 * inside you can define both the window size and the slide - both in ZIO.Duration
 
@@ -21,10 +22,10 @@ inside i use SWAG so know it refers to it.
 window
 
 * **for example:**<br>
-  window of 18.seconds, slide 3.seconds the slice size will be 3.second<br>
-  window of 18.seconds, slide 4.seconds the slice size will be 2.second<br>
-  window of 20.seconds, slide 3.seconds the slice size will be 1.second<br>
-  
+      > window of 18.seconds, slide 3.seconds the slice size will be 3.second<br>
+      > window of 18.seconds, slide 4.seconds the slice size will be 2.second<br>
+      > window of 20.seconds, slide 3.seconds the slice size will be 1.second<br>
+
 
 * the hight the GCD(window,slice) the least number of slices in a slide/window thus the faster a window will be aggregated.
 * so for example for large windows e.g. hours windows can be computed very fast if we have few slices in a slide.
