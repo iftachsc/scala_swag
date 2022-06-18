@@ -9,7 +9,7 @@ import zio.duration._
 import zio.json._
 
 object DataGen {
-  def blackbox =  {
+  val blackbox =  {
     val event_types = Seq("baz", "dolor", "bar")
     val event_data = Seq("ipum", "amet", "shuki")
     val malformed = Seq("""{ "G'{úé¿—½£""","""{ "ð•±ÀA(Æ¸""")

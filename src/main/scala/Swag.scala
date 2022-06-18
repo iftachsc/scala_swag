@@ -55,7 +55,7 @@ object SimpleSwag extends Swag {
                 case (k,v) => k -> (v + slice1.getOrElse(k,0))
             }
         }
-
+        val s= ZStream.apply()
         val sliceSize = gcd(windowSize.toMillis, slide.toMillis).millis
         //deviding in a GCD so this have to result into whole number
         val numSlicesInWindow = (windowSize.toMillis / sliceSize.toMillis).toInt
