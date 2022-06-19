@@ -6,27 +6,38 @@ import zio.console._
 import zio.duration.Duration._
 import java.io.IOException
 
-object state {
+
+object state {    
+
   type State = Has[State.Service]
-    
+  type Slice  = Map[(String, String),Int]
+  val emptyStateMap = Map[(String,String),Int]()
+
   object State {
     
+    
     trait Service {
-      def updateAndGet(update: Map[(String,String),Int] => Map[(String,String),Int]): UIO[Map[(String,String),Int]]
-      
+      def updateAndGet(update: Slice => Slice): UIO[Slice]
+      def getState: UIO[Ref[Slice]]
     }
 
     val live: Layer[Nothing, Has[Service]] = ZLayer.succeed {
       new Service {
-        val ref = Ref.make(Map[(String,String),Int]().empty)
+        val state = Ref.make(emptyStateMap)
 
-        def updateAndGet(update: Map[(String,String),Int] => Map[(String,String),Int]) = 
-            ref.flatMap(_.updateAndGet(update(_)))
+        override def updateAndGet(update: Map[(String,String),Int] => Map[(String,String),Int]) = 
+            state.flatMap(_.updateAndGet(update(_)))
 
+        override def getState = state
       }
     }
   }
 
-  def updateAndGet(update: Map[(String,String),Int] => Map[(String,String),Int]): URIO[State, Map[(String,String),Int]] =
-    ZIO.accessM(_.get.updateAndGet(update))
+  def updateAndGet(update: Slice => Slice): URIO[State, Slice] =
+      ZIO.accessM(_.get.updateAndGet(update))
+
+  def getState: URIO[State, Ref[Slice]] = 
+      ZIO.accessM(_.get.getState)
+  
 }
+

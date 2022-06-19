@@ -11,7 +11,7 @@ import zio.console._
 import scala.collection.immutable.Queue
 import java.{util => ju}
 import java.io.IOException
-
+import state._
 
 sealed trait Swag {
     type Slice  = Map[(String, String),Int]
@@ -19,21 +19,21 @@ sealed trait Swag {
 
     def partialAggregationsByEventTime(stream: ZStream[Clock with Random, Nothing,WordEvent], 
                                         eventTimeExtractor: WordEvent => Long,      
-                                         windowSize: Duration, slide: Duration, lateArrivalGrace: Duration): ZIO[Clock with Random with Console,IOException,Ref[Slice]]
+                                         windowSize: Duration, slide: Duration, lateArrivalGrace: Duration,windowRef: Ref[Slice]): ZIO[Clock with Random with Console,IOException,Ref[Slice]]
 
 }
 
 object LargeWindowsSwag extends Swag {
     def partialAggregationsByEventTime(stream: ZStream[Clock with Random, Nothing,WordEvent], 
                                         eventTimeExtractor: WordEvent => Long,      
-                                         windowSize: Duration, slide: Duration, lateArrivalGrace: Duration) = ???
+                                         windowSize: Duration, slide: Duration, lateArrivalGrace: Duration,windowRef: Ref[Slice]) = ???
 }
 
 object SimpleSwag extends Swag {
  
     def partialAggregationsByEventTime(stream: ZStream[Clock with Random, Nothing,WordEvent], 
-                                        eventTimeExtractor: WordEvent => Long,      
-                                         windowSize: Duration, slide: Duration, lateArrivalGrace: Duration) = {
+                                        eventTimeExtractor: WordEvent => Long, windowSize: Duration, 
+                                        slide: Duration, lateArrivalGrace: Duration, windowRef: Ref[Slice]) = {
         
         val emptyStateMap = Map[(String,String),Int]()
 
@@ -55,12 +55,12 @@ object SimpleSwag extends Swag {
                 case (k,v) => k -> (v + slice1.getOrElse(k,0))
             }
         }
-        val s= ZStream.apply()
+        
         val sliceSize = gcd(windowSize.toMillis, slide.toMillis).millis
         //deviding in a GCD so this have to result into whole number
         val numSlicesInWindow = (windowSize.toMillis / sliceSize.toMillis).toInt
 
-        def computeSliceAndUpdateState(sliceEnd: Duration, slicesAggrState: Ref[Queue[Slice]]) = 
+        def computeSliceAndUpdateState(sliceEnd: Duration, slicesAggrState: FiberRef[Queue[Slice]]) = 
             //this pulls messages for the next slice and compute it. then adds it to the slices state. additionaly 
             for {
                 sliceAggr <- computeNextSlice(sliceEnd).tap(slice => putStrLn(s"Handled slice: ${slice}"))
@@ -71,9 +71,9 @@ object SimpleSwag extends Swag {
                              })
             } yield ()
         
-        def computeSlideAndUpdateState(slideStart: Duration, slicesAggrState: Ref[Queue[Slice]], 
-                recentWindowState: Ref[WindowState]) =
+        def slideAndEmitWindow(slideStart: Duration, slicesAggrState: FiberRef[Queue[Slice]]) =
             for{
+                //computing slide worth of slices
                 _ <- ZIO.loop(slideStart)(_ < slideStart+slide,_ + sliceSize)(sliceStart =>
                         computeSliceAndUpdateState(sliceStart + sliceSize,slicesAggrState)
                 )
@@ -83,21 +83,20 @@ object SimpleSwag extends Swag {
                                 queue.iterator.fold(emptyStateMap)(combineSlices(_,_))
                             else
                                 emptyStateMap
-                            ).timed.flatMap({
+                            ).timed.flatMap({ //measurring computation of the window
                                     case (_, window) if(window.isEmpty) => ZIO.succeed(window)  //when the first window is still not available                                     
                                     case (time, window) => putStrLn(s"Window: ${window} [compute time: ${time.toMillis} millis]").as(window)
                                 })
-                _  <- recentWindowState.set(window)
+                _  <- windowRef.set(window)
             } yield ()
 
         for {
             _                 <- putStrLn(s"Slice Size: ${sliceSize.toSeconds} second/s").zipPar(putStrLn(s"#Slices in window: ${numSlicesInWindow}"))
-            slicesAggrState   <- Ref.make(Queue[Slice]().empty)
-            recentWindowState <- Ref.make(emptyStateMap)
+            slicesAggrState   <- FiberRef.make(Queue[Slice]().empty)
             start             <- currentTime(TimeUnit.MILLISECONDS)
             _                 <- ZIO.loop(Duration.fromMillis(start))(_ => true,_ + slide)(slideStart => 
-                                    computeSlideAndUpdateState(slideStart, slicesAggrState, recentWindowState)).fork
-      } yield recentWindowState
+                                    slideAndEmitWindow(slideStart, slicesAggrState)).fork
+      } yield windowRef
   }
 }
 

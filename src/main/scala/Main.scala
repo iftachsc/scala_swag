@@ -13,33 +13,38 @@ import zio.duration._
 import zio.random._
 import java.io.IOException
 import zio.console._
+import state._
 
 object ZioMain extends zio.App {
   //assumptions:
   //2. not handling grace periods for now (i.e. wait for current window size data even if it reached its end
   
+  val stateLayer = State.live
 
-  def run(args: List[String]) =
-    source.exitCode
-  
-  val source = {
+  val program: ZIO[ZEnv with State,IOException, Unit] = {
     //not handling invalid values for windowSize and slide e.g. 0.
     //when windowSize == slide windows degenerate to Thumbling
     val windowSize = 30.seconds
     val slide      = 3.seconds
 
+    val stateLayer = State.live
+    
     for {
       now  <- currentTime(TimeUnit.MILLISECONDS)
-      state <- SimpleSwag.partialAggregationsByEventTime(
+      state <- getState
+      _ <- SimpleSwag.partialAggregationsByEventTime(
                   DataGen.blackbox.map(_.fromJson[WordEvent]).collectRight, 
                   _.timestamp,
                   windowSize,
                   slide,
-                  1.second)
-      _ <- Http4sServer.server(state)
-      //).catchAll(_ => IO.fail("Something went wrong computing sliding window"))
+                  1.second,
+                  state)
+          .zipPar(Http4sServer.server(state))
     } yield ()
   }
+
+  def run(args: List[String]) =
+    program.provideCustomLayer(stateLayer).exitCode
 }
 
  
