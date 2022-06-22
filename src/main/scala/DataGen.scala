@@ -9,6 +9,7 @@ import zio.duration._
 import zio.json._
 
 object DataGen {
+
   val blackbox =  {
     val event_types = Seq("baz", "dolor", "bar")
     val event_data = Seq("ipum", "amet", "shuki")
@@ -33,7 +34,7 @@ object DataGen {
     //generating 10% malformed data
     val eventGenerator = nextIntBetween(0,10).flatMap(x=> if(x == 1) malFormedGenerator else typedEventGenerator)
     
-    ZStream.repeatEffectWith(eventGenerator, Schedule.spaced(20.milliseconds).jittered)
+    ZLayer.succeed(ZStream.repeatEffectWith(eventGenerator, Schedule.spaced(20.milliseconds).jittered))
   }
 }
 

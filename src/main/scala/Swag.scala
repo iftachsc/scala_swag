@@ -19,18 +19,26 @@ sealed trait Swag {
 
     def partialAggregationsByEventTime(stream: ZStream[Clock with Random, Nothing,WordEvent], 
                                         eventTimeExtractor: WordEvent => Long,      
-                                         windowSize: Duration, slide: Duration, lateArrivalGrace: Duration,windowRef: Ref[Slice]): ZIO[Clock with Random with Console,IOException,Ref[Slice]]
+                                         windowSize: Duration, slide: Duration, lateArrivalGrace: Duration,windowRef: Ref[Slice]): ZIO[Clock with Random with Console,IOException,Ref[WindowState]]
 
+    def combineSlices(slice1: Slice, slice2: Slice): Slice
 }
 
 object LargeWindowsSwag extends Swag {
     def partialAggregationsByEventTime(stream: ZStream[Clock with Random, Nothing,WordEvent], 
                                         eventTimeExtractor: WordEvent => Long,      
                                          windowSize: Duration, slide: Duration, lateArrivalGrace: Duration,windowRef: Ref[Slice]) = ???
+    
+    def combineSlices(slice1: Slice, slice2: Slice): Slice = ???
 }
 
 object SimpleSwag extends Swag {
  
+    def combineSlices(slice1: Slice, slice2: Slice): Slice =
+        slice1 ++ slice2.map { 
+            case (k,v) => k -> (v + slice1.getOrElse(k,0))
+        }
+    
     def partialAggregationsByEventTime(stream: ZStream[Clock with Random, Nothing,WordEvent], 
                                         eventTimeExtractor: WordEvent => Long, windowSize: Duration, 
                                         slide: Duration, lateArrivalGrace: Duration, windowRef: Ref[Slice]) = {
@@ -50,11 +58,7 @@ object SimpleSwag extends Swag {
                      .fold(emptyStateMap)(_ + _) //merging all key specific 
         } yield sliceAggregation
 
-        def combineSlices(slice1: Slice, slice2: Slice): Slice = {
-            slice1 ++ slice2.map { 
-                case (k,v) => k -> (v + slice1.getOrElse(k,0))
-            }
-        }
+        
         
         val sliceSize = gcd(windowSize.toMillis, slide.toMillis).millis
         //deviding in a GCD so this have to result into whole number

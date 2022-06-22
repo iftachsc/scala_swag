@@ -10,7 +10,14 @@ val htt4sVersion = "0.23.12"
 libraryDependencies ++= Seq(
     "dev.zio" %% "zio",
     "dev.zio" %% "zio-streams",
+    
 ).map(_ % zioVersion)
+
+libraryDependencies ++= Seq(
+   "dev.zio" %% "zio-test",
+   "dev.zio" %% "zio-test-sbt" 
+).map(_ % zioVersion % "test")
+testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
 
 libraryDependencies += "dev.zio" %% "zio-json" % "0.1.4"
 

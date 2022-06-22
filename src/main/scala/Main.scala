@@ -18,10 +18,8 @@ import state._
 object ZioMain extends zio.App {
   //assumptions:
   //2. not handling grace periods for now (i.e. wait for current window size data even if it reached its end
-  
-  val stateLayer = State.live
 
-  val program: ZIO[ZEnv with State,IOException, Unit] = {
+  val program = {
     //not handling invalid values for windowSize and slide e.g. 0.
     //when windowSize == slide windows degenerate to Thumbling
     val windowSize = 30.seconds
@@ -30,10 +28,10 @@ object ZioMain extends zio.App {
     val stateLayer = State.live
     
     for {
-      now  <- currentTime(TimeUnit.MILLISECONDS)
       state <- getState
+      blackbox <- ZIO.access[Has[ZStream[Clock with Random with Clock, Nothing, String]]](_.get)
       _ <- SimpleSwag.partialAggregationsByEventTime(
-                  DataGen.blackbox.map(_.fromJson[WordEvent]).collectRight, 
+                  blackbox.map(_.fromJson[WordEvent]).collectRight, 
                   _.timestamp,
                   windowSize,
                   slide,
@@ -44,7 +42,7 @@ object ZioMain extends zio.App {
   }
 
   def run(args: List[String]) =
-    program.provideCustomLayer(stateLayer).exitCode
+    program.provideCustomLayer(State.live ++ DataGen.blackbox).exitCode
 }
 
  

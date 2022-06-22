@@ -15,7 +15,6 @@ object state {
 
   object State {
     
-    
     trait Service {
       def updateAndGet(update: Slice => Slice): UIO[Slice]
       def getState: UIO[Ref[Slice]]
