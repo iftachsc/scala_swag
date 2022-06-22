@@ -26,10 +26,7 @@ object DataGen {
                     "data": "${event_data(r2)}"
                   }"""
 
-    val malFormedGenerator = 
-      for {
-        r1  <- nextIntBetween(0, malformed.length)
-      } yield malformed(r1)
+    val malFormedGenerator = nextIntBetween(0, malformed.length).map(malformed(_))
     
     //generating 10% malformed data
     val eventGenerator = nextIntBetween(0,10).flatMap(x=> if(x == 1) malFormedGenerator else typedEventGenerator)
